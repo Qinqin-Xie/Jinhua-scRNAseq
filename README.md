@@ -2,25 +2,23 @@
 
 ## Overview
 
-The intestine plays a central role in nutrient metabolism and the pathophysiology of obesity through the coordinated activity of diverse cell types. However, its developmental dynamics and cell-type-specific metabolic programs remain poorly understood at single-cell resolution. Here, we present a comprehensive single-cell atlas of the intestines in Jinhua pigs (n=25), a high-fat porcine model relevant to obesity research, spanning five intestinal regions and five key developmental stages. We profiled 168,759 cells and identified 36 distinct cell types, including epithelial, B, and T cells. Our data reveal dynamic changes in cellular function, highlighting enterocytes as central mediators of age- and region-specific metabolic program. We identify PCK1 as a previously uncharacterized, spatiotemporal heterogeneous gene of gluconeogenic pathways and obesity-associated traits in both pigs and humans. Validation demonstrates that PCK1 modulates carbohydrate metabolism via TCA cycle and pentose phosphate pathway in enterocytes. Furthermore, our data indicate that neonatal pigs provide a superior model for studying the human small intestine. Together, our findings provide a developmental framework for intestinal metabolism, with implications for understanding age-related disease risk and for optimizing animal models in metabolic research.
+The intestine plays a central role in nutrient metabolism and the pathophysiology of obesity through the coordinated activity of diverse cell types. However, its developmental dynamics and cell-type-specific metabolic programs remain poorly understood at single-cell resolution. Here, we construct  a high-resolution single-cell atlas of the intestinal mucosa in Jinhua pigs (n=25), a translational model for obesity research, capturing spatial and temporal heterogeneity across multiple developmental stages and anatomical sites. We profiled 168,759 cells and identified 36 distinct cell types, including epithelial, B, and T cells. Our analysis reveals dynamic changes in cellular function, highlighting enterocytes as central mediators of age- and region-specific metabolic program. Notably, we identify PCK1 as a previously uncharacterized, spatiotemporal heterogeneous gene of gluconeogenic pathways and obesity-associated traits in both pigs and humans. Functional validation demonstrates that PCK1 modulates carbohydrate metabolism via the TCA cycle and pentose phosphate pathway in enterocytes. Furthermore, comparative analyses suggest that neonatal pigs closely recapitulate human small intestinal biology, offering a robust model for metabolic studies. Collectively, our work provides a foundational resource for understanding intestinal metabolic maturation and its implications for age-related metabolic disorders.
 
 ## Workflow
 
 The analyses contained in our work:
 
-- Integrated single-cell atlas of Jinhua pig intestine.
-- Metabolic characteristics of epithelial cells and its subtypes in Jinhua pig intestines.
-- Single-cell and spatial analysis revealed dynamic metabolic heterogeneity of enterocytes and colonocytes.
-- PCK1 gene regulates obesity traits in pigs and humans through intestinal expression: multi omics evidence of genetic variation and causal relationship.
+- Integrated single-cell atlas of Jinhua pig intestine across developmental stages.
+- Differentiation of enterocytes and colonocytes in metabolic characteristics.
+- Single-cell and spatial analysis revealed developmental metabolic dynamics of intestinal enterocytes.
+- Intestinal PCK1 gene regulates obesity traits in pigs and humans: multi-omics evidence of genetic variation and causal relationship.
 - Regional and temporal expression of PCK1 is associated with G/G, TCA, and PPP in aged pig intestines.
 - PCK1 affects G/G, TCA, and PPP activities in intestinal enterocytes in vitro.
-- Cross-species spatiotemporal gene expression patterns of pig and human, taking enterocytes/colonocytes as an example.
-  
-  
+- Application of cross-species intestinal models, taking enterocytes and colonocytes as examples.
 
 ## Data source
 
-All single-cell datasets were available for interactive exploration and download in our interactive web portal (http://alphaindex.zju.edu.cn:8502). Genomic data was collected from PHARP (http://alphaindex.zju.edu.cn/PHARP). All other data of different formats were available from the corresponding author upon reasonable request. Source data are provided with this paper. The code generated during this study will be available at Github https://github.com/Qinqin-Xie/Jinhua-scRNAseq.
+All single-cell datasets were available for interactive exploration and download in our interactive web portal (http://alphaindex.zju.edu.cn/PigCellDB). Genomic data was collected from PHARP (http://alphaindex.zju.edu.cn/PHARP). All other data of different formats were available from the corresponding author upon reasonable request. Source data are provided with this paper. The code generated during this study will be available at Github https://github.com/Qinqin-Xie/Jinhua-scRNAseq.
 
 ## License
 
