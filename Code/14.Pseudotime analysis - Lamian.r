@@ -50,7 +50,7 @@ dev.off()
 
 pca <- as.matrix(umap@reductions$pca@cell.embeddings)
 expression <- as.matrix(umap@assays$RNA@data)
-cellanno <- data.frame(cell=rownames(umap@meta.data), sample=umap@meta.data$SEGMENT.TIME, celltype=umap@meta.data$CellType)
+cellanno <- data.frame(cell=rownames(umap@meta.data), sample=umap@meta.data$INTESTINAL.TIME, celltype=umap@meta.data$CellType)
 rownames(cellanno)=cellanno$cell
 
 ### infer tree structure
@@ -100,39 +100,39 @@ setwd("/disk213/xieqq/JINHUA138.sc/Lamian")
 
 pbmc = readRDS("/disk213/xieqq/JINHUA138.sc/RDS/Epithelial.rds")
 pbmc <- subset(pbmc, CellType %in% c("Colonocytes","Enterocytes"))
-unique(pbmc$SEGMENT)
+unique(pbmc$INTESTINAL)
 
 plotdir <- "./trajectory_tests1/"
-segment <- "cecum"
-umap <- subset(pbmc, SEGMENT %in% segment)
+INTESTINAL <- "small"
+umap <- subset(pbmc, INTESTINAL %in% INTESTINAL)
 
-pdf(paste0(plotdir, segment, '_pca.pdf'), width=6, height=5)
-DimPlot(umap, reduction="pca", group.by="SEGMENT.TIME", label=TRUE, label.size=3, repel=TRUE)
+pdf(paste0(plotdir, INTESTINAL, '_pca.pdf'), width=6, height=5)
+DimPlot(umap, reduction="pca", group.by="INTESTINAL.TIME", label=TRUE, label.size=3, repel=TRUE)
 dev.off()
 
 pca <- as.matrix(umap@reductions$pca@cell.embeddings)
 expression <- as.matrix(umap@assays$RNA@data)
-cellanno <- data.frame(cell=rownames(umap@meta.data), sample=umap@meta.data$SEGMENT.TIME, 
-                       celltype=sapply(strsplit(umap@meta.data$SEGMENT.TIME, "-"), function(x) x[2]))
+cellanno <- data.frame(cell=rownames(umap@meta.data), sample=umap@meta.data$INTESTINAL.TIME, 
+                       celltype=sapply(strsplit(umap@meta.data$INTESTINAL.TIME, "-"), function(x) x[2]))
 rownames(cellanno)=cellanno$cell
 
 res = infer_tree_structure(pca = pca, expression = expression, cellanno = cellanno, 
                            origin.marker=c('ANPEP','FABP2'), origin.celltype=c("0"),
-                           number.cluster = 5, plotdir = paste0(plotdir,segment,"_"),
+                           number.cluster = 5, plotdir = paste0(plotdir,INTESTINAL,"_"),
                            xlab='Principal component 1', ylab='Principal component 2')
 
-pdf(paste0(plotdir,segment,"_tree_structure.pdf"), width=5,height=5)
+pdf(paste0(plotdir,INTESTINAL,"_tree_structure.pdf"), width=5,height=5)
 plotmclust(res,x=1,y=2,cell_point_size=0.5)
 dev.off()
 
 pseudotime <- res[["pseudotime"]]
-write.csv(pseudotime,paste0(plotdir,segment, "_pseudotime.csv"))
+write.csv(pseudotime,paste0(plotdir,INTESTINAL, "_pseudotime.csv"))
 
 design = data.frame(intercept=1,group=unique(cellanno$sample))
 rownames(design) <- design$group
 design$group <- sapply(strsplit(design$group, "-"), function(x) x[2])
 
-saveh5(expr=expression, pseudotime=pseudotime, cellanno=cellanno, path=paste0(plotdir,segment,"_trajectory.h5"))
+saveh5(expr=expression, pseudotime=pseudotime, cellanno=cellanno, path=paste0(plotdir,INTESTINAL,"_trajectory.h5"))
 
 Res <- lamian_test(expr=expression, cellanno=cellanno, pseudotime=pseudotime, design=design, 
                    test.type='Time', test.method="permutation", testvar=2, permuiter=5, ncores=1)
@@ -147,13 +147,13 @@ Res$populationFit <- getPopulationFit(Res, gene=diffgene, type='time', num.timep
 ## clustering
 Res$cluster <- clusterGene(Res, gene=diffgene, type='time', k.auto=T, method="kmeans")
 max(Res$cluster)
-pdf(paste0(plotdir,segment,'_cluster_mean.pdf'), width=5, height=6)
+pdf(paste0(plotdir,INTESTINAL,'_cluster_mean.pdf'), width=5, height=6)
 plotClusterMean(Res, cluster=Res$cluster, type='time')
 dev.off()
 
 fit <- testTDEHm_i(Res, showRowName=F, subsampleCell=F, showCluster=T, type='time')
 colnames(fit) <- c(1:num.timepoint)
-write.csv(fit, paste0(plotdir, segment,"_fit.pseudotime.csv"))
+write.csv(fit, paste0(plotdir, INTESTINAL,"_fit.pseudotime.csv"))
 
 outgene <- data.frame(gene=rownames(fit),order=c(1:nrow(fit)))
 outcluster <- data.frame(cluster=Res$cluster)
@@ -161,7 +161,7 @@ outcluster$gene <- rownames(outcluster)
 diff_gene$gene <- rownames(diff_gene)
 outgene <- left_join(outgene,outcluster,by="gene")
 outgene <- left_join(outgene,diff_gene,by="gene")
-write.csv(outgene, paste0(plotdir, segment,"_gene_fdr.csv"))
+write.csv(outgene, paste0(plotdir, INTESTINAL,"_gene_fdr.csv"))
 
 ## save png
 col.expression = brewer.pal(n = 8, name = "Pastel1")[seq_len(2)]
@@ -186,20 +186,20 @@ cellWidthTotal = 250;cellHeightTotal = 400
 pheatmap(fit, cluster_rows = FALSE, cluster_cols = FALSE, show_rownames = FALSE, show_colnames = FALSE,
          color = cpl, annotation_col = colann.fit, annotation_row = rowann, annotation_colors = annotation_colors,
          cellwidth = cellWidthTotal / ncol(fit), cellheight = cellHeightTotal / nrow(fit), border_color = NA,
-         silent = TRUE, filename = paste0(plotdir,segment,'_pheatmap.png'))
+         silent = TRUE, filename = paste0(plotdir,INTESTINAL,'_pheatmap.png'))
 
 uniform_samples_seq <- ceiling(seq(from = 1, to = ncol(fit), length.out = 1000))
 pheatmap(fit[,uniform_samples_seq], cluster_rows = FALSE, cluster_cols = FALSE, show_rownames = FALSE, show_colnames = FALSE,
          color = cpl, annotation_row = rowann, annotation_colors = annotation_colors,
          cellwidth = cellWidthTotal / length(uniform_samples_seq), cellheight = cellHeightTotal / nrow(fit), border_color = NA,
-         silent = TRUE, filename = paste0(plotdir,segment,'_pheatmap_f.png'))
+         silent = TRUE, filename = paste0(plotdir,INTESTINAL,'_pheatmap_f.png'))
 
 #### cluster ####
 file_list <- list.files(path="/disk213/xieqq/JINHUA138.sc/Lamian/trajectory_tests", pattern="fdr.csv", full.names=TRUE)
 pbmc <- readRDS("/disk213/xieqq/JINHUA138.sc/RDS/Epithelial.rds")
 for (file in file_list) {
-  segment <- gsub(".*/|(\\_gene_fdr.csv$)", "", file)
-  seurat_obj <- subset(pbmc, SEGMENT %in% segment)
+  INTESTINAL <- gsub(".*/|(\\_gene_fdr.csv$)", "", file)
+  seurat_obj <- subset(pbmc, INTESTINAL %in% INTESTINAL)
   data <- read.csv(file,check.names=F,row.names=1)
   FetchData <- data.frame(cells=rownames(seurat_obj@meta.data))
   for (i in unique(data$cluster)){
@@ -213,10 +213,10 @@ for (file in file_list) {
   rownames(MEs) <- rownames(FetchData)
   mods <- colnames(MEs)
   seurat_obj@meta.data <- cbind(seurat_obj@meta.data, MEs)
-  FetchData$SEGMENT.TIME = seurat_obj@meta.data$SEGMENT.TIME
+  FetchData$INTESTINAL.TIME = seurat_obj@meta.data$INTESTINAL.TIME
   FetchData$CellType = seurat_obj@meta.data$CellType
-  write.csv(FetchData,paste0("/disk213/xieqq/JINHUA138.sc/Lamian/trajectory_tests/FetchData/Cluster_FetchData_",segment,".csv"))
+  write.csv(FetchData,paste0("/disk213/xieqq/JINHUA138.sc/Lamian/trajectory_tests/FetchData/Cluster_FetchData_",INTESTINAL,".csv"))
   seurat_obj@meta.data$TIME <- factor(seurat_obj@meta.data$TIME, levels=c("240","180","90","60","0")) #倒序
   p1 <- DotPlot(seurat_obj, features=mods, group.by="TIME")+RotatedAxis()+scale_color_gradient2(high="#08519C", low="#C6DBEF")
-  ggsave(filename=paste0("/disk213/xieqq/JINHUA138.sc/Lamian/trajectory_tests/FetchData/Cluster_TIME_",segment,".pdf"), plot=p1, width=8, height=8)
+  ggsave(filename=paste0("/disk213/xieqq/JINHUA138.sc/Lamian/trajectory_tests/FetchData/Cluster_TIME_",INTESTINAL,".pdf"), plot=p1, width=8, height=8)
 }

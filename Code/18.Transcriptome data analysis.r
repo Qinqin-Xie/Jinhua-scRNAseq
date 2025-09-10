@@ -8,7 +8,6 @@ library(ggplot2)
 
 setwd('/disk213/xieqq/JINHUA138/Transcriptome_analysis.3.RNAseq_new')
 Sample <- read.csv("gene_log-tpm-mean_matrix.csv", row.names=1)
-#monocle <- read.csv("/disk213/xieqq/sc/Monocle3/Trajectory_genes.csv")
 monocle <- read.csv("/disk213/xieqq/JINHUA138.sc/Lamian/trajectory_tests/Trajectory_Genes.csv")
 gene=intersect(rownames(Sample), monocle$gene)
 Sample <- subset(Sample, rownames(Sample) %in% gene)
@@ -18,30 +17,25 @@ LY <- Sample[,grepl("LY", colnames(Sample))]
 
 #step 1
 setwd('./time_warp')
-data <- data.frame(gene=monocle$gene,segment=monocle$segment)
-data$segment[which(data$segment=="duodenum")]="DU"
-data$segment[which(data$segment=="jejunum")]="JE"
-data$segment[which(data$segment=="ileum")]="IL"
-data$segment[which(data$segment=="cecum")]="CE"
-data$segment[which(data$segment=="colon")]="CO"
+data <- data.frame(gene=monocle$gene,intestine=monocle$intestine)
 data <- data[!duplicated(data), ]
 
 judgeJH <- NULL
 judgeLY <- NULL
 for (i in c(1:nrow(data))) {
   gene <- data$gene[i]
-  segment <- data$segment[i]
+  intestine <- data$intestine[i]
   
-  newJH <- JH[which(rownames(JH)==gene),grepl(segment, colnames(JH))]
-  testJH <- data.frame(gene=gene,segment=segment,title=paste(gene,segment,sep="_"),T0_60=NA,T60_90=NA,T90_180=NA,T180_240=NA)
+  newJH <- JH[which(rownames(JH)==gene),grepl(intestine, colnames(JH))]
+  testJH <- data.frame(gene=gene,intestine=intestine,title=paste(gene,intestine,sep="_"),T0_60=NA,T60_90=NA,T90_180=NA,T180_240=NA)
   if (newJH[,1]>newJH[,2]){testJH$T0_60="1"}else{testJH$T0_60="0"}
   if (newJH[,2]>newJH[,3]){testJH$T60_90="1"}else{testJH$T60_90="0"}
   if (newJH[,3]>newJH[,4]){testJH$T90_180="1"}else{testJH$T90_180="0"}
   if (newJH[,4]>newJH[,5]){testJH$T180_240="1"}else{testJH$T180_240="0"}
   judgeJH <- rbind(judgeJH,testJH)
   
-  newLY <- LY[which(rownames(LY)==gene),grepl(segment, colnames(LY))]
-  testLY <- data.frame(gene=gene,segment=segment,title=paste(gene,segment,sep="_"),T0_60=NA,T60_90=NA,T90_180=NA) 
+  newLY <- LY[which(rownames(LY)==gene),grepl(intestine, colnames(LY))]
+  testLY <- data.frame(gene=gene,intestine=intestine,title=paste(gene,intestine,sep="_"),T0_60=NA,T60_90=NA,T90_180=NA) 
   if (newLY[,1]>newLY[,2]){testLY$T0_60="1"}else{testLY$T0_60="0"}
   if (newLY[,2]>newLY[,3]){testLY$T60_90="1"}else{testLY$T60_90="0"}
   if (newLY[,3]>newLY[,4]){testLY$T90_180="1"}else{testLY$T90_180="0"}
@@ -49,7 +43,7 @@ for (i in c(1:nrow(data))) {
 }
 judgeJH$JH <- paste(judgeJH$T0_60,judgeJH$T60_90,judgeJH$T90_180,judgeJH$T180_240,sep="-")
 judgeLY$LY <- paste(judgeLY$T0_60,judgeLY$T60_90,judgeLY$T90_180,sep="-")
-judge <- inner_join(judgeJH[,c(1,2,3,8)],judgeLY[,c(1,2,3,7)],by=c("gene","segment","title"))
+judge <- inner_join(judgeJH[,c(1,2,3,8)],judgeLY[,c(1,2,3,7)],by=c("gene","intestine","title"))
 
 #step 2: match,warp(forward/backward),out
 match_list <- list()
@@ -223,18 +217,18 @@ cluster$cluster <- NA
 for (i in c(1:length(unique(cluster$group)))){
   cluster$cluster[which(cluster$group==unique(cluster$group)[i])]=paste("Cluster",i,sep="-")
 }
-new_cluster <- left_join(cluster_all[,c(1,2,5)],cluster[,c(1,2,5,7)],by=c('gene', 'segment', 'type'))
+new_cluster <- left_join(cluster_all[,c(1,2,5)],cluster[,c(1,2,5,7)],by=c('gene', 'intestine', 'type'))
 new_cluster$type <- factor(new_cluster$type,levels=c("forward","backward","match","out"),labels=c("warp (forward)","warp (backward)","match","out"))
-new_cluster$segment <- factor(new_cluster$segment,levels=c("DU","JE","IL","CE","CO"),labels=c("Duodenum","Jejunum","Ileum","Cecum","Colon"))
+new_cluster$intestine <- factor(new_cluster$intestine,levels=c("DU","JE","IL","CE","CO"),labels=c("Duodenum","Jejunum","Ileum","Cecum","Colon"))
 new_cluster$cluster <- factor(new_cluster$cluster,levels=c("Cluster-1","Cluster-2","Cluster-3","Cluster-4","Cluster-5","Cluster-6","Cluster-7","Cluster-8","Cluster-9","Cluster-10"))
-new_cluster <- arrange(new_cluster,type,segment,cluster,gene)
+new_cluster <- arrange(new_cluster,type,intestine,cluster,gene)
 write.csv(new_cluster, "cluster_all.csv", row.names=F, quote=F)
 
 for (s in c(1:5)){
-  segment=inf_list[[s]][1]
-  file_1 <- JH[,grepl(segment, colnames(JH))]
-  file_2 <- LY[,grepl(segment, colnames(LY))]
-  cluster_new <- cluster[which(cluster$segment==segment),]
+  intestine=inf_list[[s]][1]
+  file_1 <- JH[,grepl(intestine, colnames(JH))]
+  file_2 <- LY[,grepl(intestine, colnames(LY))]
+  cluster_new <- cluster[which(cluster$intestine==intestine),]
   for (i in unique(cluster_new$cluster)){
     gene <- cluster_new$gene[which(cluster_new$cluster==i)]
     file_JH <- subset(file_1, rownames(file_1) %in% gene)
@@ -246,7 +240,7 @@ for (s in c(1:5)){
     colnames(file_LY) <- c("0d","60d","90d","180d")
     file_LY$gene <- rownames(file_LY)
     file_LY = melt(file_LY)
-    text = paste(segment,i,sep="-")
+    text = paste(intestine,i,sep="-")
     P1 <- my_plot(file_JH, inf_list[[s]][2],ylab)
     P2 <- my_plot(file_LY, inf_list[[s]][2],"")
     P3 <- ggdraw()+
@@ -254,7 +248,7 @@ for (s in c(1:5)){
       draw_plot(P2,x=0.5,y=0.5,width=0.5,height=0.5)+
       draw_plot_label(label=c("JH","LY"),fontface="plain",size=16,x=c(0.1,0.6),y=c(0.7,1))+
       draw_plot_label(label=c(text),fontface="plain",color=inf_list[[s]][2],size=16,x=c(0.55,0.85),y=c(0.15,0.65))
-    pdf(file=paste0(segment,"_",i,".pdf"), width=10, height=10)
+    pdf(file=paste0(intestine,"_",i,".pdf"), width=10, height=10)
     print(P3)
     #print(ggarrange(P1,P2, nrow=2, common.legend=TRUE, legend="right"))
     dev.off()

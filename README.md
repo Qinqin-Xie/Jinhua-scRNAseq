@@ -8,9 +8,9 @@ The intestine plays a central role in nutrient metabolism and the pathophysiolog
 
 The analyses contained in our work:
 
-- Integrated single-cell atlas of Jinhua pig intestine across developmental stages.
-- Differentiation of enterocytes and colonocytes in metabolic characteristics.
-- Single-cell and spatial analysis revealed developmental metabolic dynamics of intestinal enterocytes.
+- Integrated single-cell atlas of JH intestine across developmental stages.
+- Regional and temporal regulation of enterocytes and colonocytes in metabolic characteristics.
+- Spatiotemporal genes linking carbohydrate metabolism and obesity traits.
 - Intestinal PCK1 gene regulates obesity traits in pigs and humans: multi-omics evidence of genetic variation and causal relationship.
 - Regional and temporal expression of PCK1 is associated with G/G, TCA, and PPP in aged pig intestines.
 - PCK1 affects G/G, TCA, and PPP activities in intestinal enterocytes in vitro.
